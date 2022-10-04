@@ -4,11 +4,12 @@
 // 3. delete the function from the object's property list
 Function.prototype.custom_call = function(obj) {
     let context = obj || window // set to window if input object is null
-    context.fn = this;
+    let fn = Symbol(); // use ES6 Symbol(), make sure that the added function is a unique property
+    context[fn] = this;
     [_, ...args] = arguments // collect other arguments
     console.log(args)
-    let result = context.fn(...args); 
-    delete context.fn;
+    let result = context[fn](...args); 
+    delete context[fn];
     return result;
 }
 
@@ -30,14 +31,15 @@ bar.custom_call(a)
 // codes are similar as the case for "call", except for that it takes another parameter, which is an array containing all the parameters for the funciton to be executed
 Function.prototype.custom_apply = function(obj, arg_arr) {
     let context = obj || window;
-    context.fn = this;
+    let fn = Symbol();
+    context[fn] = this;
     let result;
     if (!arg_arr) {
-        result = context.fn();
+        result = context[fn]();
     } else {
-        result = context.fn(...arg_arr);
+        result = context[fn](...arg_arr);
     }
-    delete context.fn;
+    delete context[fn];
     return result;
 }
 
